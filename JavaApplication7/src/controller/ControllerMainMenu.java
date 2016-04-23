@@ -5,12 +5,14 @@
  */
 package controller;
 
+import database.Database;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -26,33 +28,18 @@ import view.MainMenu;
  * @author aldebaranbn
  */
 public class ControllerMainMenu implements ActionListener, KeyListener{
-    Aplikasi app;
-    MainMenu main;
+    Aplikasi model;
+    MainMenu view;
     
     public ControllerMainMenu(){
-        app = new Aplikasi();
-        main = new MainMenu();
+        this.model = model;
+        view = new MainMenu();
+        view.setVisible(true);
+        view.addActionListener(this);
         
-        main.getBtnSimpanRuangan().addActionListener(this);
-        main.getBtnSimpanPasien().addActionListener(this);
-        main.getBtnSimpanDokter().addActionListener(this);
-    }
-    
-    public void addRuanganToTable(JTable table, ArrayList<Ruangan> array){
-        String[] columnRuangan = {"No Ruangan"};
-        DefaultTableModel tb = new DefaultTableModel(columnRuangan, 0){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; //To change body of generated methods, choose Tools | Templates.
-            }
-        };
-        
-        for (Ruangan r : array)
-        {
-            String[] data = {r.getNoKamar()};
-            tb.addRow(data);
-        }
-        table.setModel(tb);
+        view.getBtnSimpanRuangan().addActionListener(this);
+        this.view.getBtnSimpanPasien().addActionListener(this);
+        this.view.getBtnSimpanDokter().addActionListener(this);
     }
     
     public void addDokterToTable(JTable table, ArrayList<Dokter> array){
@@ -94,20 +81,26 @@ public class ControllerMainMenu implements ActionListener, KeyListener{
         card.show(panel, cardName);
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         
         //button simpan ruangan di klik
-        if (source.equals(main.getBtnSimpanDokter()))
+        if (source.equals(view.getBtnSimpanDokter()))
         {
-            Dokter d = new Dokter(main.getNamaDokterField().getText(), main.getUmurDokterField().getText(), main.getJKDokterField().getText(), main.getAlamatDokterField().getText(), main.getSpesialisField().getText(), main.getNIPField().getText());
+            Dokter d = new Dokter(view.getNamaDokterField().getText(), 
+                                  view.getUmurDokterField().getText(), 
+                                  view.getJKDokterField().getText(), 
+                                  view.getAlamatDokterField().getText(), 
+                                  view.getSpesialisField().getText(), 
+                                  view.getNIPField().getText());
             if (app.insertDokter(d))
             {
-                main.showMessage("Insert Berhasil !!");
+                view.showMessage("Insert Berhasil !!");
             }
             else
             {
-                main.showMessage("Insert GAGAL!", "ERROR INSERT", JOptionPane.ERROR_MESSAGE);
+                view.showMessage("Insert GAGAL!", "ERROR INSERT", JOptionPane.ERROR_MESSAGE);
             }
         }
         
